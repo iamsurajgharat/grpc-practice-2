@@ -1,0 +1,12 @@
+
+client/dotnet/bin/*
+client/dotnet/obj/*
+server/scala/project/project/*
+server/scala/project/target/*
+server/scala/target/*
+server/scala/.idea/*
+.metals/*
+.bloop/*
+.bsp/*
+.vscode/*
+.scalafmt.conf
