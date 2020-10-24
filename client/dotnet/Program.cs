@@ -69,7 +69,7 @@ namespace dotnet
                 LogInfo("[Server streaming gRPC call] starting to read server stream");
                 while (await call.ResponseStream.MoveNext())
                 {
-                    LogInfo("[Server streaming gRPC call] red server stream element :" + call.ResponseStream.Current.Value);
+                    LogInfo("[Server streaming gRPC call] received server stream element :" + call.ResponseStream.Current.Value);
                     //await Task.Delay(5000);
                 }
 

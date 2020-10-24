@@ -2,10 +2,13 @@ package com.surajgharat.practice.grpc.server
 
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
+
 import com.surajgharat.practice.grpc.service.demoService.{DemoNumber, DemoServiceGrpc, Empty, PoisonPill}
 import com.surajgharat.practice.grpc.service.sumservice.SumInput
 import io.grpc.stub.StreamObserver
 import io.grpc.{Server, ServerBuilder}
+
+import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 
 object DemoServer {
@@ -54,17 +57,20 @@ class DemoServer(ec: ExecutionContext){
     override def getAllPrimeNumbersWithinGivenRange(request: DemoNumber, responseObserver: StreamObserver[DemoNumber]): Unit = {
       logger.info(s"[Server streaming gRPC call] Received input ${request.value}")
 
+      // Iterate through all numbers in the given range
       for(i <- 2 to request.value){
 
-        logger.info(s"[Server streaming gRPC call] Checking if ${i} is prime number")
+        logger.info(s"[Server streaming gRPC call] Checking if $i is prime number")
         //TimeUnit.SECONDS.sleep(3);
 
+        // if the number is prime then send to client
         if(isPrime(i)) {
           responseObserver.onNext(DemoNumber(i))
-          DemoServer.logger.info(s"[Server streaming gRPC call] Sent ${i} as it is a prime number")
+          DemoServer.logger.info(s"[Server streaming gRPC call] Sent $i as it is a prime number")
         }
       }
 
+      // send stream completion signal to client
       responseObserver.onCompleted()
 
       logger.info("[Server streaming gRPC call] Done all processing for input :"+request.value)
@@ -99,7 +105,7 @@ class DemoServer(ec: ExecutionContext){
       private var sum = 0
       override def onNext(value: DemoNumber): Unit = {
         DemoServer.logger.info("[Client streaming gRPC call] Received stream element :"+value.value)
-        TimeUnit.SECONDS.sleep(1);
+        TimeUnit.SECONDS.sleep(1)
         sum = sum + value.value
       }
 
@@ -121,7 +127,7 @@ class DemoServer(ec: ExecutionContext){
         DemoServer.logger.info(s"[Bi streaming gRPC call] Received ${value.value}. Current sum is $sum and count is $count")
         if(sum >= 100){
           responseObserver.onNext(DemoNumber(count))
-          count = 0;
+          count = 0
           sum = 0
         }
       }
@@ -136,6 +142,7 @@ class DemoServer(ec: ExecutionContext){
 
     private def isPrime(n:Int):Boolean = !canDivideByAnyFromRange(n,2, n/2)
 
+    @tailrec
     private def canDivideByAnyFromRange(n:Int, start:Int, end:Int):Boolean =
       if( start > end ) false
       else if(n % start == 0) true
