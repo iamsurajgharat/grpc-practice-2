@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package com.surajgharat.practice.grpc.service;
+
+service DemoService {
+  rpc Sum(SumInput) returns(DemoNumber) {}
+  rpc GetAllPrimeNumbersWithinGivenRange(DemoNumber)
+      returns(stream DemoNumber) {}
+  rpc SumMultiple(stream DemoNumber) returns(DemoNumber) {}
+  rpc GetCountsToMakeHundred(stream DemoNumber) returns(stream DemoNumber) {}
+  rpc Terminate(PoisonPill) returns(Empty) {}
+}
+
+message SumInput {
+  int32 n1 = 1;
+  int32 n2 = 2;
+}
+
+message DemoNumber { int32 value = 1; }
+
+message PoisonPill {}
+message Empty {}

@@ -4,6 +4,7 @@ package com.surajgharat.practice.grpc.service;
 
 service SumService {
   rpc Sum(SumInput) returns (SumOutput) {}
+  rpc GetSumUniqueComponents(SumNumber) returns (stream SumNumber) {}
 }
 
 message SumInput {
@@ -12,3 +13,4 @@ message SumInput {
 }
 
 message SumOutput { int32 result = 1; }
+message SumNumber { int32 value = 1; }

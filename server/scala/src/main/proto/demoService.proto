@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package com.surajgharat.practice.grpc.service;
+
+// import below proto file to access a message defined in it
+import "sumservice.proto";
+
+service DemoService {
+  rpc Sum(SumInput) returns (DemoNumber) {}
+  rpc GetAllPrimeNumbersWithinGivenRange(DemoNumber) returns (stream DemoNumber) {}
+  rpc SumMultiple(stream DemoNumber) returns (DemoNumber) {}
+  rpc GetCountsToMakeHundred(stream DemoNumber) returns (stream DemoNumber) {}
+  rpc Terminate(PoisonPill) returns (Empty) {}
+}
+
+message DemoNumber{ int32 value = 1; }
+
+message PoisonPill{ }
+
+message Empty{ }
