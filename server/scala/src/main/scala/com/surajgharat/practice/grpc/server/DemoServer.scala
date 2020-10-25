@@ -119,20 +119,31 @@ class DemoServer(ec: ExecutionContext){
     }
 
     private def getBiStreamObserverForCountForHundred(responseObserver: StreamObserver[DemoNumber]): StreamObserver[DemoNumber] = new StreamObserver[DemoNumber] {
+      import DemoServer._
       var sum = 0
       var count = 0
       override def onNext(value: DemoNumber): Unit = {
+        // accumulate sum and number of inputs
         sum = sum + value.value
         count = count + 1
-        DemoServer.logger.info(s"[Bi streaming gRPC call] Received ${value.value}. Current sum is $sum and count is $count")
+        logger.info(s"[Bi streaming gRPC call] Received ${value.value}. Current sum is $sum and count is $count")
+
+        // if the accumulated sum is gte 100 then send reply to client
         if(sum >= 100){
           responseObserver.onNext(DemoNumber(count))
+
+          // reset
           count = 0
           sum = 0
         }
       }
 
-      override def onError(t: Throwable): Unit = ???
+      override def onError(t: Throwable): Unit = {
+        logger.severe(s"[Bi streaming gRPC call] received error from client and so completing:"+t)
+
+        // stopping entire server which would not be the case in reality
+        stop()
+      }
 
       override def onCompleted(): Unit = {
         DemoServer.logger.info(s"[Bi streaming gRPC call] client input is complete and so also completing server output")
@@ -140,7 +151,7 @@ class DemoServer(ec: ExecutionContext){
       }
     }
 
-    private def isPrime(n:Int):Boolean = !canDivideByAnyFromRange(n,2, n/2)
+    private def isPrime(n:Int):Boolean = !canDivideByAnyFromRange(n, 2, n/2)
 
     @tailrec
     private def canDivideByAnyFromRange(n:Int, start:Int, end:Int):Boolean =

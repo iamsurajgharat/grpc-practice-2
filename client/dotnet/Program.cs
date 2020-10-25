@@ -20,7 +20,7 @@ namespace dotnet
             int n2 = GetNumFromArgs(args, 2, 20);
             int n3 = GetNumFromArgs(args, 3, 20);
             int n4 = GetNumFromArgs(args, 4, 15);
-            int n5 = GetNumFromArgs(args, 4, 20);
+            int n5 = GetNumFromArgs(args, 5, 20);
 
             logger = GetLogger<Program>();
 
@@ -40,9 +40,9 @@ namespace dotnet
             var client = new DemoService.DemoServiceClient(channel);
 
             // grpc calls
-            await MakeNonStreamGrpcCallAsync(client, n1, n2);
-            await MakeServerStreamGrpcCallAsync(client, n3);
-            await MakeClientStreamGrpcCallAsync(client, n4);
+            //await MakeNonStreamGrpcCallAsync(client, n1, n2);
+            //await MakeServerStreamGrpcCallAsync(client, n3);
+            //await MakeClientStreamGrpcCallAsync(client, n4);
             await MakeBiStreamGrpcCallAsync(client, n5);
             await MakeTerminateCallAsync(client);
         }
@@ -70,6 +70,7 @@ namespace dotnet
                 while (await call.ResponseStream.MoveNext())
                 {
                     LogInfo("[Server streaming gRPC call] received server stream element :" + call.ResponseStream.Current.Value);
+
                     //await Task.Delay(5000);
                 }
 
@@ -125,7 +126,7 @@ namespace dotnet
                 int a1 = rnd.Next(1, 100);
 
                 LogInfo("[Bi-streaming gRPC call] sending :" + i);
-                await Task.Delay(5000);
+                await Task.Delay(2000);
                 await call.RequestStream.WriteAsync(new DemoNumber { Value = a1 });
             }
 
